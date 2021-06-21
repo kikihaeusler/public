@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+ <meta charset="utf-8">
+ <title></title>
+ <meta name="description" content="">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  %%[
+/* check time zone daylight saving time */
+var @difference_summer,
+@difference_winter,
+@timestamp_result,
+@timezone_now,
+@servertime,
+@localtime
+ 
+SET @difference_summer = 8
+SET @difference_winter = 7
+SET @servertime = NOW()
+SET @localtime = SystemDateToLocalDate(Now())
+
+IF DateDiff(@servertime,@localtime, 'H') == @difference_summer THEN
+    Set @timestamp_result = Dateadd(NOW(),@difference_summer,'H')
+    Set @timezone_now = @difference_summer
+    Set @debugmessage = CONCAT('Sommer time, difference ',@difference_summer,' hours. Calculated timestamp:', @timestamp_result)
+ELSEIF DateDiff(@servertime,@localtime, 'H') == @difference_winter THEN
+    Set @timestamp_result = Dateadd(NOW(),@difference_winter,'H')
+    Set @timezone_now = @difference_winter
+    Set @debugmessage = CONCAT('Winter time, difference ',@difference_summer,' hours. Calculated timestamp:', @timestamp_result)
+ELSE
+    Set @debugmessage = "DST could not be checked. Error 54321"
+ENDIF
+]%%
+<br>
+Server Time: %%=v(@servertime)=%%
+<br>
+Local Time: %%=v(@localtime)=%%
+
+<br>
+Info: %%=v(@debugmessage)=%%
+<br>
+</body>
+</html>

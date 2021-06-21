@@ -1,0 +1,33 @@
+
+%%[
+/* salutation german */
+ 
+VAR @lastname, @firstname, @gender, @salutation, @DE 
+SET @DE = "0621_Dev_Master" 
+SET @sk = _subscriberkey
+SET @lastname = LOOKUP(@DE,'Name', 'SubscriberKey', @sk) 
+SET @firstname = LOOKUP(@DE,'FirstName', 'SubscriberKey', @sk) 
+SET @gender = LOOKUP(@DE,'Gender', 'SubscriberKey', @sk) 
+/* gender available, lastname available */ 
+IF @gender == "w" AND NOT EMPTY(@lastname) THEN 
+	SET @salutation = CONCAT("Dear Mrs ",@lastname,",") 
+ELSEIF @gender == "m" AND NOT EMPTY(@lastname) THEN 
+	SET @salutation = CONCAT("Dear Mr ",@lastname,",") 
+/* gender available, no lastname available */ 
+ELSEIF @gender == "w" AND (EMPTY(@lastname)) AND (NOT EMPTY(@firstname)) THEN 
+	SET @salutation = CONCAT("Hi ",@firstname,",")
+ELSEIF @gender == "m" AND (EMPTY(@lastname)) AND (NOT EMPTY(@firstname)) THEN 
+	SET @salutation = CONCAT("Howdy ",@firstname,",")
+/* no gender available, first- und lastname available */ 
+ELSEIF (EMPTY(@gender)) AND (NOT EMPTY(@firstname)) AND (NOT EMPTY(@lastname)) THEN 
+	SET @salutation = CONCAT("Hello ",@firstname," ",@lastname,",") 
+ELSE 
+	SET @salutation = "Hello!" 
+ENDIF 
+]%% 
+
+<!-- Test Output 
+%%=v(@salutation)=%%
+%%=v(@lastname)=%%
+%%=v(@firstname)=%%
+%%=v(@sk)=%% -->

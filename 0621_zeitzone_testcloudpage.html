@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+<head>
+ <meta charset="utf-8">
+ <title></title>
+ <meta name="description" content="">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body>
+  %%[
+/* Zeitzone prüfen */
+var @zeitunterschied_sommer,
+@zeitunterschied_winter,
+@zeitstempel_berechnet,
+@zeitzone_aktuell,
+@servertime,
+@localtime
+ 
+SET @zeitunterschied_sommer = 8
+SET @zeitunterschied_winter = 7
+SET @servertime = NOW()
+SET @localtime = SystemDateToLocalDate(Now())
+/* Zetzone prüfen */
+IF DateDiff(@servertime,@localtime, 'H') == @zeitunterschied_sommer THEN
+    Set @zeitstempel_berechnet = Dateadd(NOW(),@zeitunterschied_sommer,'H')
+    Set @zeitzone_aktuell = @zeitunterschied_sommer
+    Set @debugmessage = CONCAT('Sommerzeit in dieser Zeitzone, Unterschied ',@zeitunterschied_sommer,' Stunden. Der berechnete Zeitstempel lautet:', @zeitstempel_berechnet)
+ELSEIF DateDiff(@servertime,@localtime, 'H') == @zeitunterschied_winter THEN
+    Set @zeitstempel_berechnet = Dateadd(NOW(),@zeitunterschied_winter,'H')
+    Set @zeitzone_aktuell = @zeitunterschied_winter
+    Set @debugmessage = CONCAT('Winterzeit in dieser Zeitzone, Unterschied ',@zeitunterschied_sommer,' Stunden. Der berechnete Zeitstempel lautet:', @zeitstempel_berechnet)
+ELSE
+    Set @debugmessage = "Zeitzone konnte nicht geprüft werden"
+ENDIF
+]%%
+<br>
+Serverzeit: %%=v(@servertime)=%%
+<br>
+Lokale Zeit: %%=v(@localtime)=%%
+
+<br>
+Info: %%=v(@debugmessage)=%%
+<br>
+</body>
+</html>
